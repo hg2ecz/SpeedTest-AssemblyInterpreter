@@ -39,12 +39,21 @@ static void (*instructions[])(double *out, double m1, double m2) = {
     instr_sub,
     instr_mul,
     instr_div,
+
+    instr_nop,
+    instr_nop,
+    instr_nop,
+
+    instr_nop,
+    instr_nop,
+    instr_nop,
+    instr_nop,
 };
 
 void interpret_calltable(struct _vliw *vliw, int len) {
     int i=0;
     while (i<len) {
-	instructions[vliw[i].opcode](vliw[i].outptr, *vliw[i].m1ptr, *vliw[i].m2ptr);
+	instructions[vliw[i].opcode & 0x0f](vliw[i].outptr, *vliw[i].m1ptr, *vliw[i].m2ptr);
 	i++;
     }
 }
