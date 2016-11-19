@@ -4,7 +4,7 @@
 
 #include "fast_interpret.h"
 
-double gout=42, gm2=1;
+double gout=123456, gm2=1;
 
 static double msec(struct timespec gstart, struct timespec gend) {
     unsigned long long nsec;
@@ -15,27 +15,49 @@ static double msec(struct timespec gstart, struct timespec gend) {
 
 
 int main() {
+    double loopct;
+    double loopdec1=1;
+    double reljump=-DATANUM-1;
+
     printf("Datanum: %d, Repeat: %d, gout: %f, gm2: %f\n", DATANUM, REPEAT, gout, gm2);
     static struct timespec t1, t2;
-    struct _vliw *vliw = malloc(DATANUM*sizeof(struct _vliw));
+    struct _vliw *vliw = malloc((DATANUM+3)*sizeof(struct _vliw));
     for (int i=0; i<DATANUM; i++) {
 	vliw[i].opcode = 5; // add
 	vliw[i].outptr = &gout;
 	vliw[i].m1ptr = &gout;
 	vliw[i].m2ptr = &gm2;
     }
+
+    vliw[DATANUM+0].opcode = 6; // sub
+    vliw[DATANUM+0].outptr = &loopct;
+    vliw[DATANUM+0].m1ptr = &loopct;
+    vliw[DATANUM+0].m2ptr = &loopdec1;
+
+    vliw[DATANUM+1].opcode = 14; // jnz
+    vliw[DATANUM+1].outptr = &loopct;
+    vliw[DATANUM+1].m1ptr = &loopct;   // compared value
+    vliw[DATANUM+1].m2ptr = &reljump;  // jump
+
+    vliw[DATANUM+2].opcode = 15; // +1 exit
+    vliw[DATANUM+2].outptr = &loopct;
+    vliw[DATANUM+2].m1ptr = &loopct;
+    vliw[DATANUM+2].m2ptr = &loopdec1;
+
+    loopct=REPEAT; // reinit loopct
     clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t1);
-    for (int i=0; i<REPEAT; i++) interpret_calltable(vliw, DATANUM);
+    interpret_calltable(vliw, DATANUM);
     clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t2);
     printf("calltable --> gout: %f msec: %f, megainstrpersec: %f\n", gout, msec(t1, t2), 0.001*DATANUM*REPEAT/msec(t1, t2));
 
+    loopct=REPEAT; // reinit loopct
     clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t1);
-    for (int i=0; i<REPEAT; i++) interpret_switch(vliw, DATANUM);
+    interpret_switch(vliw, DATANUM);
     clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t2);
     printf("switch    --> gout: %f msec: %f, megainstrpersec: %f\n", gout, msec(t1, t2), 0.001*DATANUM*REPEAT/msec(t1, t2));
 
     clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t1);
-    for (int i=0; i<REPEAT; i++) interpret_direct(&gout, gm2, DATANUM);
+    interpret_direct(&gout, gm2, REPEAT*DATANUM);
     clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t2);
     printf("direkt    --> gout: %f msec: %f, megainstrpersec: %f\n", gout, msec(t1, t2), 0.001*DATANUM*REPEAT/msec(t1, t2));
 
