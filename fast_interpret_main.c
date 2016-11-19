@@ -50,13 +50,13 @@ int main() {
 
     loopct=REPEAT; // reinit loopct
     clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t1);
-    interpret_calltable(vliw, DATANUM);
+    interpret_calltable(vliw);
     clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t2);
     printf("calltable --> gout: %f msec: %f, megainstrpersec: %f\n", gout, msec(t1, t2), 0.001*DATANUM*REPEAT/msec(t1, t2));
 
     loopct=REPEAT; // reinit loopct
     clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t1);
-    interpret_switch(vliw, DATANUM);
+    interpret_switch(vliw);
     clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t2);
     printf("switch    --> gout: %f msec: %f, megainstrpersec: %f\n", gout, msec(t1, t2), 0.001*DATANUM*REPEAT/msec(t1, t2));
 

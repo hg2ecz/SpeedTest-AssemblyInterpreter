@@ -1,7 +1,7 @@
 #include <limits.h>
 #include "fast_interpret.h"
 
-void interpret_switch(struct _vliw *vliw, int len) {
+void interpret_switch(struct _vliw *vliw) {
     int progct=0;
     _Bool run=1;
     while (run) {

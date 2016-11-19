@@ -64,7 +64,7 @@ static int (*instructions[])(double *out, double m1, double m2) = {
     instr_exit
 };
 
-void interpret_calltable(struct _vliw *vliw, int len) {
+void interpret_calltable(struct _vliw *vliw) {
     int progct=0;
     while (progct >= 0) {
 	progct+=instructions[vliw[progct].opcode & 0x0f](

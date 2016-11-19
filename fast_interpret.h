@@ -5,6 +5,6 @@ struct _vliw {
     double *m2ptr;
 };
 
-void interpret_calltable(struct _vliw *vliw, int len);
-void interpret_switch(struct _vliw *vliw, int len);
+void interpret_calltable(struct _vliw *vliw);
+void interpret_switch(struct _vliw *vliw);
 void interpret_direct(double *out, double m2, int len);
