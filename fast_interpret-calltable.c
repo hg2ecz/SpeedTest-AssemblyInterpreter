@@ -33,7 +33,7 @@ static void instr_mul(double *out, double m1, double m2) {*out = m1 * m2; }
 static void instr_div(double *out, double m1, double m2) {*out = m1 / m2; }
 
 static void instr_jnz(double *out, double m1, double m2) {
-    if (m1) vcpu.progct+=m2-1;
+    if (m1) vcpu.progct+=m2;
 }
 
 static void instr_exit(double *out, double m1, double m2) {

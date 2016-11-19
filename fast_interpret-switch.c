@@ -54,7 +54,7 @@ void interpret_switch(struct _vliw *vliw, int len) {
 	    case 13: break; // nop
 
 	    case 14:
-		if (*vliw[vcpu.progct].m1ptr) vcpu.progct+=*vliw[vcpu.progct].m2ptr-1;
+		if (*vliw[vcpu.progct].m1ptr) vcpu.progct+=*vliw[vcpu.progct].m2ptr;
 		break;
 	    case 15:
 		vcpu.run=0;

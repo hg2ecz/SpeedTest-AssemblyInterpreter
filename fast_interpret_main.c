@@ -4,7 +4,9 @@
 
 #include "fast_interpret.h"
 
-double gout=123456, gm2=1;
+
+static double gout=123456, gm2=1;
+
 
 static double msec(struct timespec gstart, struct timespec gend) {
     unsigned long long nsec;
@@ -17,32 +19,34 @@ static double msec(struct timespec gstart, struct timespec gend) {
 int main() {
     double loopct;
     double loopdec1=1;
-    double reljump=-DATANUM-1;
+    double reljump=-DATANUM;
+    static double plus3=3;
 
     printf("Datanum: %d, Repeat: %d, gout: %f, gm2: %f\n", DATANUM, REPEAT, gout, gm2);
     static struct timespec t1, t2;
-    struct _vliw *vliw = malloc((DATANUM+3)*sizeof(struct _vliw));
-    for (int i=0; i<DATANUM; i++) {
+    struct _vliw *vliw = malloc((DATANUM+1)*sizeof(struct _vliw)); // +1 exit
+    for (int i=0; i<DATANUM-2; i++) {
 	vliw[i].opcode = 5; // add
 	vliw[i].outptr = &gout;
 	vliw[i].m1ptr = &gout;
 	vliw[i].m2ptr = &gm2;
     }
+    vliw[DATANUM-3].m2ptr = &plus3; // 1+2 ... result comp. (sub; jnz)
 
-    vliw[DATANUM+0].opcode = 6; // sub
+    vliw[DATANUM-2].opcode = 6; // sub
+    vliw[DATANUM-2].outptr = &loopct;
+    vliw[DATANUM-2].m1ptr = &loopct;
+    vliw[DATANUM-2].m2ptr = &loopdec1;
+
+    vliw[DATANUM-1].opcode = 14; // jnz
+    vliw[DATANUM-1].outptr = &loopct;
+    vliw[DATANUM-1].m1ptr = &loopct;   // compared value
+    vliw[DATANUM-1].m2ptr = &reljump;  // jump
+
+    vliw[DATANUM+0].opcode = 15; // +1 exit
     vliw[DATANUM+0].outptr = &loopct;
     vliw[DATANUM+0].m1ptr = &loopct;
     vliw[DATANUM+0].m2ptr = &loopdec1;
-
-    vliw[DATANUM+1].opcode = 14; // jnz
-    vliw[DATANUM+1].outptr = &loopct;
-    vliw[DATANUM+1].m1ptr = &loopct;   // compared value
-    vliw[DATANUM+1].m2ptr = &reljump;  // jump
-
-    vliw[DATANUM+2].opcode = 15; // +1 exit
-    vliw[DATANUM+2].outptr = &loopct;
-    vliw[DATANUM+2].m1ptr = &loopct;
-    vliw[DATANUM+2].m2ptr = &loopdec1;
 
     loopct=REPEAT; // reinit loopct
     clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t1);
