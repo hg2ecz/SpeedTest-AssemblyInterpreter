@@ -1,0 +1,48 @@
+Memory (constant and data and jmpaddress are IEEE754 double):
+
+Datamem:
+       const double data1
+       const double data2
+       const double jmpaddrLoop12
+       ...
+       double var1
+       double var2
+       ...
+
+Program mem:
+       opcode outptr op1ptr op2ptr
+       opcode outptr op1ptr op2ptr
+       opcode outptr op1ptr op2ptr
+       opcode outptr op1ptr op2ptr
+
+
+Aritmetical instruction format:
+    opcode  outmem  op1mem  op2mem   ; where the operands are "double *"
+
+Branch instructions (je, jne, incjl, decjge):
+    opcode  outmem  jmpaddr op2mem   ; "je": outmem == op2mem --> JMP
+                                     ; incjl, decjge: outmem--  ...
+Subroutine (call, ret):
+    opcode  -       jmpaddr codepos  ; call with return codepos (codepos via constmem)
+    opcode  -       -       -        ; ret (retcodepos from stack)
+
+Instruction set (default: double):
+
+0x00: and (outptr, op1ptr, op2ptr) - 52 bit long, out = op1 & op2; -- and *0 *0 *0 --> NOP
+0x01: or  (outptr, op1ptr, op2ptr) - 52 bit long, out = op1 | op2;
+0x02: xor (outptr, op1ptr, op2ptr) - 52 bit long, out = op1 ^ op2;
+0x03: shl (outptr, op1ptr, op2ptr) - 52 bit long, out = op1 << op2;
+0x04: shr (outptr, op1ptr, op2ptr) - 52 bit long, out = op1 >> op2;
+0x05: add (outptr, op1ptr, op2ptr) - out = op1 + op2; // you can use as nop (0, 0, 0, 0)
+0x06: sub (outptr, op1ptr, op2ptr) - out = op1 - op2;
+0x07: mul (outptr, op1ptr, op2ptr) - out = op1 * op2;
+
+0x08: div (outptr, op1ptr, op2ptr) - out = op1 / op2;
+0x09: mod (outptr, op1ptr, op2ptr) - out = (long long 52bit)op1 % (int)op2;
+0x0a: incjl  (outptr, op1ptr, op2ptr) - *outptr++; if (*outptr < op2) progct+=op1
+0x0b: decjge (outptr, op1ptr, op2ptr) - *outptr--; if (*outptr >= 0)  progct+=op1
+
+0x0c: je   (outptr, op1ptr, op2ptr) - if (*outptr == op2) progct+=op1;
+0x0d: jne  (outptr, op1ptr, op2ptr) - if (*outptr != op2) progct+=op1;
+0x0e: call (outptr, op1ptr, op2ptr) - progct+=op1; op2 --> *(++stack)
+0x0f: ret  (outptr, op1ptr, op2ptr) - progct+=*(stack--); stack first element: INT_MIN --> exit

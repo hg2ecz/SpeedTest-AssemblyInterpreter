@@ -1,61 +1,37 @@
 #include <limits.h>
 #include "fast_interpret.h"
 
+#define CALLSTACKMAX 1024
+
 void interpret_switch(struct _vliw *vliw) {
+    int callstack[CALLSTACKMAX] = {INT_MIN};
+    unsigned int callstackptr = 0;
     int progct=0;
-    _Bool run=1;
-    while (run) {
+    while (progct >= 0) {
 	switch(vliw[progct].opcode) {
-	    case 0: break; // nop
-	    case 1: {       // and
-		int m1_i = *vliw[progct].m1ptr;
-		int m2_i = *vliw[progct].m2ptr;
-		*vliw[progct].outptr = m1_i & m2_i;
-		} break;
-	    case 2: {        // or
-		int m1_i = *vliw[progct].m1ptr;
-		int m2_i = *vliw[progct].m2ptr;
-		*vliw[progct].outptr = m1_i | m2_i;
-		} break;
-	    case 3: {        // xor
-		int m1_i = *vliw[progct].m1ptr;
-		int m2_i = *vliw[progct].m2ptr;
-		*vliw[progct].outptr = m1_i ^ m2_i;
-		} break;
-	    case 4: {        // not
-		int m1_i = *vliw[progct].m1ptr;
-		*vliw[progct].outptr = ~m1_i;
-		} break;
+	    case 0: *vliw[progct].outptr = (long long)*vliw[progct].m1ptr & (long long)*vliw[progct].m2ptr; break;
+	    case 1: *vliw[progct].outptr = (long long)*vliw[progct].m1ptr | (long long)*vliw[progct].m2ptr; break;
+	    case 2: *vliw[progct].outptr = (long long)*vliw[progct].m1ptr ^ (long long)*vliw[progct].m2ptr; break;
+	    case 3: *vliw[progct].outptr = (long long)*vliw[progct].m1ptr << (unsigned int)*vliw[progct].m2ptr; break;
+	    case 4: *vliw[progct].outptr = (long long)*vliw[progct].m1ptr >> (unsigned int)*vliw[progct].m2ptr; break;
+	    case 5: *vliw[progct].outptr = *vliw[progct].m1ptr + *vliw[progct].m2ptr; break;
+	    case 6: *vliw[progct].outptr = *vliw[progct].m1ptr - *vliw[progct].m2ptr; break;
+	    case 7: *vliw[progct].outptr = *vliw[progct].m1ptr * *vliw[progct].m2ptr; break;
+	    case 8: *vliw[progct].outptr = *vliw[progct].m1ptr / *vliw[progct].m2ptr; break;
+	    case 9: *vliw[progct].outptr = (long long)*vliw[progct].m1ptr % (int)*vliw[progct].m2ptr; break;
 
-	    case 5:        // add
-		*vliw[progct].outptr = *vliw[progct].m1ptr + *vliw[progct].m2ptr;
-		break;
+	    case 10: progct += ++*vliw[progct].outptr <  *vliw[progct].m2ptr ? *vliw[progct].m1ptr : 0; break; // incjl
+	    case 11: progct += --*vliw[progct].outptr >= *vliw[progct].m2ptr ? *vliw[progct].m1ptr : 0; break; // decjge
 
-	    case 6:        // sub
-		*vliw[progct].outptr = *vliw[progct].m1ptr - *vliw[progct].m2ptr;
-		break;
-
-	    case 7:        // mul
-		*vliw[progct].outptr = *vliw[progct].m1ptr * *vliw[progct].m2ptr;
-		break;
-
-	    case 8:        // div
-		*vliw[progct].outptr = *vliw[progct].m1ptr / *vliw[progct].m2ptr;
-		break;
-
-	    case 9: break; // nop
-	    case 10: break; // nop
-	    case 11: break; // nop
-	    case 12: break; // nop
-	    case 13: break; // nop
+	    case 12: progct += *vliw[progct].outptr == *vliw[progct].m2ptr ? *vliw[progct].m1ptr : 0; break; // cmpje
+	    case 13: progct += *vliw[progct].outptr != *vliw[progct].m2ptr ? *vliw[progct].m1ptr : 0; break; // cmpjne
 
 	    case 14:
-		if (*vliw[progct].m1ptr) progct+=*vliw[progct].m2ptr;
+		if (callstackptr >= CALLSTACKMAX-1) callstackptr=1;
+		callstack[++callstackptr] = *vliw[progct].m2ptr;
+		progct += *vliw[progct].m1ptr;
 		break;
-	    case 15:
-		run=0;
-		break;
-
+	    case 15: progct += callstack[callstackptr--];
 	    default: break;
 	}
 	progct++;
