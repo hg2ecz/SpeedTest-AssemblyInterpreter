@@ -17,7 +17,7 @@ static double msec(struct timespec gstart, struct timespec gend) {
 
 
 int main() {
-    double zero=0;
+    double repeatnum=REPEAT;
     double reljump=-DATANUM;
     double plus2=2;
 
@@ -34,15 +34,15 @@ int main() {
     }
     vliw[DATANUM-2].m2ptr = &plus2; // 1+2 ... result comp. (sub; jnz)
 
-    vliw[DATANUM-1].opcode = 11;       // decjge
+    vliw[DATANUM-1].opcode = 10;       // incjl
     vliw[DATANUM-1].outptr = &loopct;
     vliw[DATANUM-1].m1ptr = &reljump;  // jump
-    vliw[DATANUM-1].m2ptr = &zero;     // compared value
+    vliw[DATANUM-1].m2ptr = &repeatnum;// compared value
 
     vliw[DATANUM+0].opcode = 15; // +1 ret (exit)
     vliw[DATANUM+0].outptr = &loopct;
     vliw[DATANUM+0].m1ptr = &loopct;
-    vliw[DATANUM+0].m2ptr = &loopct;
+    vliw[DATANUM+0].m2ptr = &repeatnum;
 
     double gouttest=0; interpret_direct(&gouttest, gm2, REPEAT*DATANUM); // cpu wake from sleep (ondemand)
 
@@ -52,13 +52,13 @@ int main() {
     printf("direkt    --> gout: %f msec: %f, megainstrpersec: %f\n", gout, msec(t1, t2), 0.001*DATANUM*REPEAT/msec(t1, t2));
 
 
-    loopct=REPEAT; // reinit loopct
+    loopct=0; // reinit loopct
     clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t1);
     interpret_calltable(vliw);
     clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t2);
     printf("calltable --> gout: %f msec: %f, megainstrpersec: %f\n", gout, msec(t1, t2), 0.001*DATANUM*REPEAT/msec(t1, t2));
 
-    loopct=REPEAT; // reinit loopct
+    loopct=0; // reinit loopct
     clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t1);
     interpret_switch(vliw);
     clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t2);
