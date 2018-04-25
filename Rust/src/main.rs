@@ -51,8 +51,7 @@ fn main() {
     let reg: Vec<f64> = vec![0., 1., 2., 0., -DATANUM as f64, REPEAT as f64];
     let mut vliw_struct: Vec<VliwStruct> = vec![];
     for _i in 0..DATANUM-2 {
-	let x = VliwStruct(5, 0, 0, 1);
-	vliw_struct.push(x); // add
+	vliw_struct.push(VliwStruct(5, 0, 0, 1)); // add
     }
     // 0: outreg,    1: const 1,    2: const 2
     vliw_struct.push(VliwStruct(5, 0, 0, 2)); // 1+2 ... result comp. (sub; jnz)
