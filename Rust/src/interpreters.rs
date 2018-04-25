@@ -1,3 +1,5 @@
+// == Direct ==
+
 pub fn interpret_direct(out: &mut f64, m2: f64) {
     *out += m2;
 }
@@ -6,6 +8,7 @@ pub fn interpret_direct2(out: f64, m2: f64) -> f64 {
     out + m2
 }
 
+// == Switch ==
 
 pub enum Vliw {
     And (usize, usize, usize), // 0x00
@@ -27,11 +30,10 @@ pub enum Vliw {
     Ret   (usize, usize, usize), // 0x0f
 }
 
-// == Switch ==
 pub fn interpret_switch(vliw: Vec<Vliw>, mut reg: Vec<f64>) -> Vec<f64> {
-    let mut callstack: Vec<usize> = vec![];
-    let mut progct: usize=0;
     let invalid = usize::max_value()/2;
+    let mut callstack: Vec<usize> = vec![invalid];
+    let mut progct: usize=0;
     while progct < invalid {
 	match vliw[progct] { // hint: NOP <== and 0, 0, 0  ( out = reg0 & reg0 )
 	    Vliw::And (outptr, m1ptr, m2ptr)  => reg[outptr] = (reg[m1ptr] as u64 & reg[m2ptr] as u64) as f64,
@@ -55,13 +57,7 @@ pub fn interpret_switch(vliw: Vec<Vliw>, mut reg: Vec<f64>) -> Vec<f64> {
 		callstack.push(m2ptr);
 		progct += m1ptr;
 	    },
-	    Vliw::Ret   (_outptr, _m1ptr, _m2ptr)=> {
-		if let Some(ret) = callstack.pop() {
-		    progct += ret;
-		} else {
-		    progct += invalid;
-		} // return (last return --> exit)
-	    }
+	    Vliw::Ret   (_outptr, _m1ptr, _m2ptr)=> if let Some(ret) = callstack.pop() { progct += ret; } // return (last return --> exit)
 	}
 	progct+=1;
     }
