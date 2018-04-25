@@ -32,7 +32,7 @@ pub fn interpret_switch(vliw: Vec<Vliw>, mut reg: Vec<f64>) -> Vec<f64> {
     let mut callstack: Vec<usize> = vec![];
     let mut progct: usize=0;
     let invalid = usize::max_value()/2;
-    while progct <= invalid {
+    while progct < invalid {
 	match vliw[progct] { // hint: NOP <== and 0, 0, 0  ( out = reg0 & reg0 )
 	    Vliw::And (outptr, m1ptr, m2ptr)  => reg[outptr] = (reg[m1ptr] as u64 & reg[m2ptr] as u64) as f64,
 	    Vliw::Or  (outptr, m1ptr, m2ptr)  => reg[outptr] = (reg[m1ptr] as u64 | reg[m2ptr] as u64) as f64,
@@ -56,8 +56,8 @@ pub fn interpret_switch(vliw: Vec<Vliw>, mut reg: Vec<f64>) -> Vec<f64> {
 		progct += m1ptr;
 	    },
 	    Vliw::Ret   (_outptr, _m1ptr, _m2ptr)=> {
-		if callstack.len() > 0 {
-		    progct = callstack[callstack.len()-1]
+		if let Some(ret) = callstack.pop() {
+		    progct += ret;
 		} else {
 		    progct += invalid;
 		} // return (last return --> exit)
