@@ -57,7 +57,7 @@ pub fn interpret_switch(vliw: Vec<Vliw>, mut reg: Vec<f64>) -> Vec<f64> {
 		callstack.push(m2ptr);
 		progct += m1ptr;
 	    },
-	    Vliw::Ret   (_outptr, _m1ptr, _m2ptr)=> if let Some(ret) = callstack.pop() { progct += ret; } // return (last return --> exit)
+	    Vliw::Ret   (_outptr, _m1ptr, _m2ptr)=> progct += callstack.pop().unwrap(), // return (last return --> exit)
 	}
 	progct+=1;
     }
