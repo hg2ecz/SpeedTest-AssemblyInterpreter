@@ -3,6 +3,7 @@ mod interpreter_switch;
 mod interpreter_calltable;
 mod interpreter_calltable_obj;
 mod interpreter_calltable_obj2;
+mod interpreter_calltable_obj3;
 
 use interpreter_switch::VliwEnum;
 use interpreter_calltable::VliwStruct;
@@ -88,4 +89,14 @@ fn main() {
     let elapsed_time = start_time.elapsed();
     let milliseconds = (elapsed_time.as_secs() as f64 * 1000.0) + (elapsed_time.subsec_nanos() as f64 / 1_000_000.0);
     println!("Calltable_obj2 interpreter: {} ms (out: {})", milliseconds, res[0]);
+
+
+    // out, const1, cons2, loopct, reljmp, repeatnum
+    let reg: Vec<f64> = vec![0., 1., 2., 0., -DATANUM as f64, REPEAT as f64];
+    let mut interpret_obj = interpreter_calltable_obj3::InterpretCalltable::new();
+    let start_time = Instant::now();
+    let res = interpret_obj.interpret_calltable(&vliw_struct, reg);
+    let elapsed_time = start_time.elapsed();
+    let milliseconds = (elapsed_time.as_secs() as f64 * 1000.0) + (elapsed_time.subsec_nanos() as f64 / 1_000_000.0);
+    println!("Calltable_obj3 interpreter: {} ms (out: {})", milliseconds, res[0]);
 }
