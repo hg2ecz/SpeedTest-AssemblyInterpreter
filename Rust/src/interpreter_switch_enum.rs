@@ -19,7 +19,7 @@ pub enum VliwEnum {
     Ret   (usize, usize, usize), // 0x0f
 }
 
-pub fn interpret_switch(vliw_enum: Vec<VliwEnum>, mut reg: Vec<f64>) -> Vec<f64> {
+pub fn interpret_switch(vliw_enum: &Vec<VliwEnum>, mut reg: Vec<f64>) -> Vec<f64> {
     let invalid = usize::max_value()/2;
     let mut callstack: Vec<usize> = vec![invalid];
     let mut progct: usize=0;
