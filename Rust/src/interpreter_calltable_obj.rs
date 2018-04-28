@@ -49,7 +49,7 @@ impl InterpretCalltable {
 	}
     }
 
-    pub fn interpret_calltable(&mut self, vliw_struct: &Vec<VliwStruct>, mut reg: Vec<f64>) -> (Vec<f64>) {
+    pub fn interpret_calltable(&mut self, vliw_struct: &Vec<VliwStruct>, mut reg: Vec<f64>) -> Vec<f64> {
 	let invalid = usize::max_value()/2;
 	self.callstack = vec![invalid];
 	let mut progct: usize=0;
