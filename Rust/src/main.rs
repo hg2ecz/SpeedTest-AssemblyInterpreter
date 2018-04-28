@@ -1,6 +1,10 @@
-mod interpreters;
-//extern crate interpreters;
-use interpreters::{VliwEnum, VliwStruct};
+mod interpreter_direct;
+mod interpreter_switch;
+mod interpreter_calltable;
+mod interpreter_calltable_obj;
+
+use interpreter_switch::VliwEnum;
+use interpreter_calltable::VliwStruct;
 
 use std::time::Instant;
 
@@ -11,7 +15,7 @@ fn main() {
     let start_time = Instant::now();
     let mut out: f64 = 0.;
     for _i in 0..REPEAT*DATANUM {
-	interpreters::interpret_direct(&mut out, 1.);
+	interpreter_direct::interpret_direct(&mut out, 1.);
     }
     let elapsed_time = start_time.elapsed();
     let milliseconds = (elapsed_time.as_secs() as f64 * 1000.0) + (elapsed_time.subsec_nanos() as f64 / 1_000_000.0);
@@ -20,7 +24,7 @@ fn main() {
     let start_time = Instant::now();
     let mut out: f64 = 0.;
     for _i in 0..REPEAT*DATANUM {
-	out = interpreters::interpret_direct2(out, 1.);
+	out = interpreter_direct::interpret_direct2(out, 1.);
     }
     let elapsed_time = start_time.elapsed();
     let milliseconds = (elapsed_time.as_secs() as f64 * 1000.0) + (elapsed_time.subsec_nanos() as f64 / 1_000_000.0);
@@ -41,7 +45,7 @@ fn main() {
 
 
     let start_time = Instant::now();
-    let res = interpreters::interpret_switch(vliw_enum, reg);
+    let res = interpreter_switch::interpret_switch(vliw_enum, reg);
     let elapsed_time = start_time.elapsed();
     let milliseconds = (elapsed_time.as_secs() as f64 * 1000.0) + (elapsed_time.subsec_nanos() as f64 / 1_000_000.0);
     println!("Switch interpreter: {} ms (out: {})", milliseconds, res[0]);
@@ -60,8 +64,18 @@ fn main() {
     vliw_struct.push(VliwStruct(15, 3, 4, 5)); // +1 ret (exit)
 
     let start_time = Instant::now();
-    let res = interpreters::interpret_calltable(vliw_struct, reg);
+    let res = interpreter_calltable::interpret_calltable(&vliw_struct, reg);
     let elapsed_time = start_time.elapsed();
     let milliseconds = (elapsed_time.as_secs() as f64 * 1000.0) + (elapsed_time.subsec_nanos() as f64 / 1_000_000.0);
     println!("Calltable interpreter: {} ms (out: {})", milliseconds, res[0]);
+
+
+    // out, const1, cons2, loopct, reljmp, repeatnum
+    let reg: Vec<f64> = vec![0., 1., 2., 0., -DATANUM as f64, REPEAT as f64];
+    let mut interpret_obj = interpreter_calltable_obj::InterpretCalltable::new();
+    let start_time = Instant::now();
+    let res = interpret_obj.interpret_calltable(&vliw_struct, reg);
+    let elapsed_time = start_time.elapsed();
+    let milliseconds = (elapsed_time.as_secs() as f64 * 1000.0) + (elapsed_time.subsec_nanos() as f64 / 1_000_000.0);
+    println!("Calltable_obj interpreter: {} ms (out: {})", milliseconds, res[0]);
 }
