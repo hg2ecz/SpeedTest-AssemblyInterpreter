@@ -29,74 +29,72 @@ void interpret_goto(const struct _vliw *vliw) {
 	&&instr_ret, // progct+=stack--; stack[0] = INT_MIN ---> exit
     };
 
-    int progct=-1;
-start:
-    if (++progct >= 0) goto *instruction_table[vliw[progct].opcode & 0x0f];
-    else return;  // end of assembly program
+    int progct = 0;
+    goto *instruction_table[vliw[progct].opcode & 0x0f];
 
 instr_and:
     *vliw[progct].outptr = (long long)*vliw[progct].m1ptr & (long long)*vliw[progct].m2ptr;
-    goto start;
+    goto *instruction_table[vliw[++progct].opcode & 0x0f];
 
 instr_or:
     *vliw[progct].outptr = (long long)*vliw[progct].m1ptr | (long long)*vliw[progct].m2ptr;
-    goto start;
+    goto *instruction_table[vliw[++progct].opcode & 0x0f];
 
 instr_xor:
     *vliw[progct].outptr = (long long)*vliw[progct].m1ptr ^ (long long)*vliw[progct].m2ptr;
-    goto start;
+    goto *instruction_table[vliw[++progct].opcode & 0x0f];
 
 instr_shl:
     *vliw[progct].outptr = (long long)*vliw[progct].m1ptr << (unsigned int)*vliw[progct].m2ptr;
-    goto start;
+    goto *instruction_table[vliw[++progct].opcode & 0x0f];
 
 instr_shr:
     *vliw[progct].outptr = (long long)*vliw[progct].m1ptr >> (unsigned int)*vliw[progct].m2ptr;
-    goto start;
+    goto *instruction_table[vliw[++progct].opcode & 0x0f];
 
 instr_add:
     *vliw[progct].outptr = *vliw[progct].m1ptr + *vliw[progct].m2ptr;
-    goto start;
+    goto *instruction_table[vliw[++progct].opcode & 0x0f];
 
 instr_sub:
     *vliw[progct].outptr = *vliw[progct].m1ptr - *vliw[progct].m2ptr;
-    goto start;
+    goto *instruction_table[vliw[++progct].opcode & 0x0f];
 
 instr_mul:
     *vliw[progct].outptr = *vliw[progct].m1ptr * *vliw[progct].m2ptr;
-    goto start;
+    goto *instruction_table[vliw[++progct].opcode & 0x0f];
 
 instr_div:
     *vliw[progct].outptr = *vliw[progct].m1ptr / *vliw[progct].m2ptr;
-    goto start;
+    goto *instruction_table[vliw[++progct].opcode & 0x0f];
 
 instr_mod:
     *vliw[progct].outptr = (long long)*vliw[progct].m1ptr % (int)*vliw[progct].m2ptr;
-    goto start;
+    goto *instruction_table[vliw[++progct].opcode & 0x0f];
 
 instr_incjl:
     progct += ++*vliw[progct].outptr <  *vliw[progct].m2ptr ? *vliw[progct].m1ptr : 0;
-    goto start;
+    goto *instruction_table[vliw[++progct].opcode & 0x0f];
 
 instr_decjge:
     progct += --*vliw[progct].outptr >= *vliw[progct].m2ptr ? *vliw[progct].m1ptr : 0;
-    goto start;
+    goto *instruction_table[vliw[++progct].opcode & 0x0f];
 
 instr_je:
     progct += *vliw[progct].outptr == *vliw[progct].m2ptr ? *vliw[progct].m1ptr : 0;
-    goto start;
+    goto *instruction_table[vliw[++progct].opcode & 0x0f];
 
 instr_jne:
     progct += *vliw[progct].outptr != *vliw[progct].m2ptr ? *vliw[progct].m1ptr : 0;
-    goto start;
+    goto *instruction_table[vliw[++progct].opcode & 0x0f];
 
 instr_call:
     if (callstackptr >= CALLSTACKMAX-1) callstackptr=1;
     callstack[++callstackptr] = *vliw[progct].m2ptr;
     progct += *vliw[progct].m1ptr;
-    goto start;
+    goto *instruction_table[vliw[++progct].opcode & 0x0f];
 
 instr_ret:
     progct += callstack[callstackptr--];
-    goto start; // return (last return --> exit)
+    if (progct >= 0) goto *instruction_table[vliw[++progct].opcode & 0x0f]; // speedup: end return check here   (last return --> exit)
 }
