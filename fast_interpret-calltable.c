@@ -50,7 +50,7 @@ static int (*instructions[])(double *out, double m1, double m2) = {
     instr_ret, // progct+=stack--; stack[0] = INT_MIN ---> exit
 };
 
-void interpret_calltable(struct _vliw *vliw) {
+void interpret_calltable(const struct _vliw *vliw) {
     callstack[0]=INT_MIN;
     callstackptr=0;
     int progct=0;

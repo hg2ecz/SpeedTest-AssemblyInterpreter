@@ -3,7 +3,7 @@
 
 #define CALLSTACKMAX 1024
 
-void interpret_switch(struct _vliw *vliw) {
+void interpret_switch(const struct _vliw *vliw) {
     int callstack[CALLSTACKMAX] = {INT_MIN};
     unsigned int callstackptr = 0;
     int progct=0;
