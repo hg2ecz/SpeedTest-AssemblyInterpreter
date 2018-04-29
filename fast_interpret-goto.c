@@ -27,8 +27,7 @@ void interpret_goto(const struct _vliw *vliw) {
 	&&instr_jne, // if (*outmem != *op2mem) progct+=*op1mem;
 	&&instr_call,// progct+=*op1mem; ++stack = *op2mem; (=relative return address)
 	&&instr_ret, // progct+=stack--; stack[0] = INT_MIN ---> exit
-};
-
+    };
 
     int progct=-1;
 start:
