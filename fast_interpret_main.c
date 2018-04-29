@@ -49,48 +49,54 @@ int main() {
     clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t1);
     interpret_direct(&gout, gm2, REPEAT*DATANUM);
     clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t2);
-    printf("direkt    --> gout: %f msec: %f, megainstrpersec: %f\n", gout, msec(t1, t2), 0.001*DATANUM*REPEAT/msec(t1, t2));
+    printf("direkt       --> gout: %f msec: %f, megainstrpersec: %f\n", gout, msec(t1, t2), 0.001*DATANUM*REPEAT/msec(t1, t2));
 
 
     loopct=0; // reinit loopct
     clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t1);
     interpret_calltable(vliw);
     clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t2);
-    printf("calltable --> gout: %f msec: %f, megainstrpersec: %f\n", gout, msec(t1, t2), 0.001*DATANUM*REPEAT/msec(t1, t2));
+    printf("calltable    --> gout: %f msec: %f, megainstrpersec: %f\n", gout, msec(t1, t2), 0.001*DATANUM*REPEAT/msec(t1, t2));
 
     loopct=0; // reinit loopct
     clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t1);
     interpret_switch(vliw);
     clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t2);
-    printf("switch    --> gout: %f msec: %f, megainstrpersec: %f\n", gout, msec(t1, t2), 0.001*DATANUM*REPEAT/msec(t1, t2));
+    printf("switch       --> gout: %f msec: %f, megainstrpersec: %f\n", gout, msec(t1, t2), 0.001*DATANUM*REPEAT/msec(t1, t2));
 
     loopct=0; // reinit loopct
     clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t1);
     interpret_goto(vliw);
     clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t2);
-    printf("goto      --> gout: %f msec: %f, megainstrpersec: %f\n", gout, msec(t1, t2), 0.001*DATANUM*REPEAT/msec(t1, t2));
+    printf("goto         --> gout: %f msec: %f, megainstrpersec: %f\n", gout, msec(t1, t2), 0.001*DATANUM*REPEAT/msec(t1, t2));
 
     loopct=0; // reinit loopct
     clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t1);
     interpret_goto_jit(vliw, DATANUM+1);
     clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t2);
-    printf("goto jit  --> gout: %f msec: %f, megainstrpersec: %f\n", gout, msec(t1, t2), 0.001*DATANUM*REPEAT/msec(t1, t2));
+    printf("goto jit     --> gout: %f msec: %f, megainstrpersec: %f\n", gout, msec(t1, t2), 0.001*DATANUM*REPEAT/msec(t1, t2));
+
+    loopct=0; // reinit loopct
+    clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t1);
+    interpret_goto_jit_mod(vliw, DATANUM+1);
+    clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t2);
+    printf("goto jit-mod --> gout: %f msec: %f, megainstrpersec: %f\n", gout, msec(t1, t2), 0.001*DATANUM*REPEAT/msec(t1, t2));
 
     loopct=0; // reinit loopct
     clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t1);
     interpret_goto_jit2(vliw, DATANUM+1);
     clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t2);
-    printf("goto jit2 --> gout: %f msec: %f, megainstrpersec: %f\n", gout, msec(t1, t2), 0.001*DATANUM*REPEAT/msec(t1, t2));
+    printf("goto jit2    --> gout: %f msec: %f, megainstrpersec: %f\n", gout, msec(t1, t2), 0.001*DATANUM*REPEAT/msec(t1, t2));
 
     loopct=0; // reinit loopct
     clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t1);
     interpret_goto_jit3(vliw, DATANUM+1);
     clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t2);
-    printf("goto jit3 --> gout: %f msec: %f, megainstrpersec: %f\n", gout, msec(t1, t2), 0.001*DATANUM*REPEAT/msec(t1, t2));
+    printf("goto jit3    --> gout: %f msec: %f, megainstrpersec: %f\n", gout, msec(t1, t2), 0.001*DATANUM*REPEAT/msec(t1, t2));
 
     loopct=0; // reinit loopct
     clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t1);
-    interpret_goto_jit4(vliw, DATANUM+1);
+    interpret_goto_jit3_mod(vliw, DATANUM+1);
     clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t2);
-    printf("goto jit4 --> gout: %f msec: %f, megainstrpersec: %f\n", gout, msec(t1, t2), 0.001*DATANUM*REPEAT/msec(t1, t2));
+    printf("goto jit3-mod -> gout: %f msec: %f, megainstrpersec: %f\n", gout, msec(t1, t2), 0.001*DATANUM*REPEAT/msec(t1, t2));
 }
