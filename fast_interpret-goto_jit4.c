@@ -101,12 +101,12 @@ instr_mod:
 
 instr_incjl:
     v = vliw_jit[progct];
-    progct += ++*vliw_jit[progct].outptr <  *v.m2ptr ? *v.m1ptr : 0;
+    progct += ++*v.outptr <  *v.m2ptr ? *v.m1ptr : 0;
     goto *vliw_jit[progct++].instr;
 
 instr_decjge:
     v = vliw_jit[progct];
-    progct += --*vliw_jit[progct].outptr >= *v.m2ptr ? *v.m1ptr : 0;
+    progct += --*v.outptr >= *v.m2ptr ? *v.m1ptr : 0;
     goto *vliw_jit[progct++].instr;
 
 instr_je:
