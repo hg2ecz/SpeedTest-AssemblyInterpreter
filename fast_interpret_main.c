@@ -69,4 +69,10 @@ int main() {
     interpret_goto(vliw);
     clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t2);
     printf("goto      --> gout: %f msec: %f, megainstrpersec: %f\n", gout, msec(t1, t2), 0.001*DATANUM*REPEAT/msec(t1, t2));
+
+    loopct=0; // reinit loopct
+    clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t1);
+    interpret_goto_jit(vliw, DATANUM+1);
+    clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t2);
+    printf("goto jit  --> gout: %f msec: %f, megainstrpersec: %f\n", gout, msec(t1, t2), 0.001*DATANUM*REPEAT/msec(t1, t2));
 }
