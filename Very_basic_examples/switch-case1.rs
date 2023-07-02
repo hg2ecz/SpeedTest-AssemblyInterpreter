@@ -1,4 +1,4 @@
-// Assembly code: https://rust.godbolt.org/z/3sEfq3Wox
+// Assembly code: https://rust.godbolt.org/z/4ffaesK4M
 fn interpret_example(opcodes: &[u8]) -> i32 {
     let mut instrptr = 0;
     let mut reg: i32 = 0;
