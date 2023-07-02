@@ -1,5 +1,5 @@
 // Assembly code: https://rust.godbolt.org/z/YxWG8rc6Y
-pub enum OpCode {
+enum OpCode {
     Add133,
     Sub133,
     Add155,
@@ -10,7 +10,7 @@ pub enum OpCode {
     Ret,
 }
 
-pub fn interpret_example(opcodes: &[OpCode]) -> i32 {
+fn interpret_example(opcodes: &[OpCode]) -> i32 {
     let mut instrptr = 0;
     let mut reg: i32 = 0;
 
