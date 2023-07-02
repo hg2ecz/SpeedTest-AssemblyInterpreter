@@ -1,4 +1,5 @@
-// Assembly code: https://c.godbolt.org/z/4bjK8adoj
+// Assembly code: https://c.godbolt.org/z/4bjK8adoj   - default
+//                https://c.godbolt.org/z/jEjc7bWhE   - case 0x07
 #include <stddef.h>
 #include <stdint.h>
 

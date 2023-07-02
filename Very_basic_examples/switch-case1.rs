@@ -1,4 +1,4 @@
-// Assembly code: https://rust.godbolt.org/z/8bx8bo1Ec
+// Assembly code: https://rust.godbolt.org/z/rd19srTT6
 fn interpret_example(opcodes: &[u8]) -> i32 {
     let mut instrptr = 0;
     let mut reg: i32 = 0;
@@ -12,7 +12,7 @@ fn interpret_example(opcodes: &[u8]) -> i32 {
             0x04 => reg += 177,
             0x05 => reg -= 177,
             0x06 => instrptr = reg as usize, // JMP
-            _ => return reg,                 // or 0x07: less step on gcc-13? Why?
+            _ => return reg,                 // 0x07: can't compile (Rust 1.70)
         }
         instrptr += 1;
     }
