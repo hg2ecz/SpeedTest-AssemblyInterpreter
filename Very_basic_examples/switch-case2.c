@@ -1,6 +1,8 @@
-// Assembly code: https://c.godbolt.org/z/3nMeP9fW9
+// Assembly code: https://c.godbolt.org/z/vzn8afG1E
 #include <stddef.h>
 #include <stdint.h>
+
+#define PROGLEN 0x10000
 
 enum OpCode {
     Add133,
@@ -13,11 +15,12 @@ enum OpCode {
     Ret,
 };
 
-int32_t interpret_example(enum OpCode *opcodes) {
+int32_t interpret_example(enum OpCode opcodes[PROGLEN]) {
     size_t instrptr=0;
     int32_t reg=0;
 
     while (1) {
+        instrptr %= PROGLEN;
         switch (opcodes[instrptr++] & 0x07) {     // & 0x07 - faster!
             case Add133: reg += 133; break;
             case Sub133: reg -= 133; break;

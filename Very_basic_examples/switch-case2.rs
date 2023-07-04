@@ -1,4 +1,6 @@
-// Assembly code: https://rust.godbolt.org/z/YxWG8rc6Y
+// Assembly code: https://rust.godbolt.org/z/M9Pj3Kvja
+const PROGLEN: usize = 0x10_000;
+
 enum OpCode {
     Add133,
     Sub133,
@@ -10,11 +12,12 @@ enum OpCode {
     Ret,
 }
 
-fn interpret_example(opcodes: &[OpCode]) -> i32 {
+fn interpret_example(opcodes: &[OpCode; PROGLEN]) -> i32 {
     let mut instrptr = 0;
     let mut reg: i32 = 0;
 
     loop {
+        instrptr %= PROGLEN;
         match opcodes[instrptr] {
             OpCode::Add133 => reg += 133,
             OpCode::Sub133 => reg -= 133,
